@@ -18,7 +18,7 @@ def do_pack():
         return None
 
     arc_file = 'versions/web_static_{}.tgz'.format(time)
-    
+
     compress = local("tar -cvzf {} web_static".format(arc_file))
 
     if compress.failed:
