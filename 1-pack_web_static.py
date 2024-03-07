@@ -11,19 +11,14 @@ from datetime import datetime
 def do_pack():
     """archive file"""
 
-    time = datetime.utcnow()
+    time = datetime.now().strftime("%Y%m%d%H%M%S")
 
     directory = local("mkdir -p versions")
     if directory.failed:
         return None
 
-    arc_file = 'versions/web_static_{}{}{}{}{}.tgz'.format(time.year,
-                                                           time.month,
-                                                           time.day,
-                                                           time.hour,
-                                                           time.minute,
-                                                           time.second)
-
+    arc_file = 'versions/web_static_{}.tgz'.format(time)
+    
     compress = local("tar -cvzf {} web_static".format(arc_file))
 
     if compress.failed:
