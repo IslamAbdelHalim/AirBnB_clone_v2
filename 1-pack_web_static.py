@@ -11,11 +11,11 @@ from datetime import datetime
 def do_pack():
     """archive file"""
 
+    time = datetime.utcnow()
+
     directory = local("mkdir -p versions")
     if directory.failed:
         return None
-
-    time = datetime.utcnow()
 
     arc_file = 'versions/web_static_{}{}{}{}{}.tgz'.format(time.year,
                                                            time.month,
