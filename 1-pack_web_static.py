@@ -24,7 +24,7 @@ def do_pack():
                                                            time.minute,
                                                            time.second)
 
-    compress = local("tar -czf {} web_static".format(arc_file))
+    compress = local("tar -cvzf {} web_static".format(arc_file))
 
     if compress.failed:
         return None
