@@ -42,7 +42,9 @@ def do_deploy(archive_path):
         run('ln -sf /data/web_static/releases/{} \
                 /data/web_static/current'.format(file_without_ext))
 
+        print('New version deployed!')
+
         return True
 
-    except:
+    except Exception:
         return False
