@@ -11,7 +11,7 @@ from datetime import datetime
 
 env.hosts = ["35.174.207.3", "100.26.230.80"]
 
-@runs_once
+
 def do_pack():
     """
     function that creats archive
