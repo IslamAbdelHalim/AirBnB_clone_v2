@@ -73,3 +73,9 @@ class FileStorage:
                 if value == obj:
                     theObj = key
             del FileStorage.__objects[theObj]
+    
+    def close(self):
+        """
+            Methos that call reload method
+        """
+        FileStorage.reload()
