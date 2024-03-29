@@ -3,7 +3,9 @@
 import uuid
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DATETIME
+
+time = "%Y-%m-%dT%H:%M:%S.%f"
 
 Base = declarative_base()
 
@@ -11,19 +13,25 @@ Base = declarative_base()
 class BaseModel:
     """A base class for all hbnb models"""
     id = Column(String(60), primary_key=True, unique=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DATETIME, default=datetime.utcnow(), nullable=False)
+    updated_at = Column(DATETIME, default=datetime.utcnow(), nullable=False)
 
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model"""
         if kwargs:
             for key, value in kwargs.items():
-                if key == 'created_at' or key == 'updated_at':
-                    setattr(self, key,
-                            datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f'))
-            if key != "__class__" and not hasattr(self, key):
-                setattr(self, key, value)
-
+                if key != "__class__":
+                    setattr(self, key, value)
+            if kwargs.get("created_at", None) and type(self.created_at) is str:
+                self.created_at = datetime.strptime(kwargs["created_at"], time)
+            else:
+                self.created_at = datetime.utcnow()
+            if kwargs.get("updated_at", None) and type(self.updated_at) is str:
+                self.updated_at = datetime.strptime(kwargs["updated_at"], time)
+            else:
+                self.updated_at = datetime.utcnow()
+            if kwargs.get("id", None) is None:
+                self.id = str(uuid.uuid4())
         else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
@@ -43,16 +51,15 @@ class BaseModel:
 
     def to_dict(self):
         """Convert instance into dict format"""
-        dictionary = {}
-        dictionary.update(self.__dict__)
-        dictionary.update({'__class__':
-                          (str(type(self)).split('.')[-1]).split('\'')[0]})
-        dictionary['created_at'] = self.created_at.isoformat()
-        dictionary['updated_at'] = self.updated_at.isoformat()
-
-        if '_sa_instance_state' in dictionary.keys():
-            del dictionary['_sa_instance_state']
-        return dictionary
+        new_dict = self.__dict__.copy()
+        if "created_at" in new_dict:
+            new_dict["created_at"] = new_dict["created_at"].strftime(time)
+        if "updated_at" in new_dict:
+            new_dict["updated_at"] = new_dict["updated_at"].strftime(time)
+        new_dict["__class__"] = self.__class__.__name__
+        if "_sa_instance_state" in new_dict:
+            del new_dict["_sa_instance_state"]
+        return new_dict
 
     def delete(self):
         """to delete an instance from storage"""

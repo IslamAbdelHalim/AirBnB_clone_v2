@@ -18,7 +18,6 @@ class State(BaseModel, Base):
         name = Column(String(128), nullable=False)
         cities = relationship(
                 "City", cascade="all, delete-orphan", backref="state")
-
     else:
         name = ""
 
@@ -26,8 +25,9 @@ class State(BaseModel, Base):
     def cities(self):
         """getter attribute"""
         from models import storage
+        cities = storage.all(City)
         cities_list = []
-        for i in storage.all(City).values():
-            if i.state.id == self.id:
+        for i in cities.values():
+            if i.state_id == self.id:
                 cities_list.append(i)
         return cities_list

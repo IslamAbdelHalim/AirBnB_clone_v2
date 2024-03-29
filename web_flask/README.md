@@ -24,3 +24,13 @@ Is a decorator that tell the flask what url should trigger our functions
 and also bind functions to url
 
 ### How to handle variables in a route?
+@app.route('/about/<username>')
+def about(username):
+	and manipulate with it
+or you can convert or use specific type of variable
+like string, path, uuid, int, float
+@app.route('/about/<string:username>')
+def about(username):
+        and manipulate with it
+
+
