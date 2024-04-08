@@ -5,12 +5,7 @@ from sqlalchemy import Column, String, ForeignKey, Integer, Float, Table
 from sqlalchemy.orm import relationship
 import os
 
-
-class Place(BaseModel, Base):
-    """ A place to stay """
-    __tablename__ = "places"
-
-    place_amenity = Table(
+place_amenity = Table(
         'place_amenity', Base.metadata,
         Column(
             'place_id', String(60), ForeignKey('places.id'),
@@ -20,8 +15,12 @@ class Place(BaseModel, Base):
             primary_key=True, nullable=False)
     )
 
-    storage_type = os.getenv('HBNB_TYPE_STORAGE')
+storage_type = os.getenv('HBNB_TYPE_STORAGE')
 
+
+class Place(BaseModel, Base):
+    """initialize Place"""
+    __tablename__ = "places"
     if storage_type == 'db':
         city_id = Column(String(60), ForeignKey('cities.id'), nullable=False)
         user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
@@ -66,11 +65,11 @@ class Place(BaseModel, Base):
     def amenities(self):
         """Getter attribute returns list of Amenity instances"""
         from models import storage
+        from models.amenity import Amenity
         amenities_list = []
-        for amenity_id in self.amenity_ids:
-            am = storage.get('Amenity', amenity_id)
-            if am:
-                amenities_list.append(am)
+        all_amenities = storage.all(Amenity)
+        for amenity_id in all_amenities.values():
+            amenities_list.append(amenity_id);
         return amenities_list
 
     @amenities.setter
