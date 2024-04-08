@@ -13,6 +13,9 @@ from sqlalchemy import (create_engine)
 from sqlalchemy.orm import sessionmaker, scoped_session
 import os
 
+classes = {"Amenity": Amenity, "City": City,
+           "Place": Place, "Review": Review, "State": State, "User": User}
+
 
 class DBStorage:
     """new class"""
@@ -33,17 +36,15 @@ class DBStorage:
 
     def all(self, cls=None):
         """all function"""
-        if cls is None:
-            classes = [User, State, City, Amenity, Place, Review]
-        else:
-            classes = [cls]
+        new_dict = {}
+        for clas in classes:
+            if cls is None or cls is classes[clas] or cls is clas:
+                objs = self.__session.query(classes[clas]).all()
+                for obj in objs:
+                    key = obj.__class__.__name__ + '.' + obj.id
+                    new_dict[key] = obj
+        return new_dict
 
-        objects = {}
-        for x in classes:
-            for obj in self.__session.query(x).all():
-                key = f"{obj.__class__.__name__}.{obj.id}"
-                objects[key] = obj
-        return objects
 
     def new(self, obj):
         """new obj"""

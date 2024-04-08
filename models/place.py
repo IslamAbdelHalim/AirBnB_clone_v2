@@ -5,17 +5,18 @@ from sqlalchemy import Column, String, ForeignKey, Integer, Float, Table
 from sqlalchemy.orm import relationship
 import os
 
-place_amenity = Table(
-        'place_amenity', Base.metadata,
-        Column(
-            'place_id', String(60), ForeignKey('places.id'),
-            primary_key=True, nullable=False),
-        Column(
-            'amenity_id', String(60), ForeignKey('amenities.id'),
-            primary_key=True, nullable=False)
-    )
-
 storage_type = os.getenv('HBNB_TYPE_STORAGE')
+
+if storage_type == "db":
+    place_amenity = Table("place_amenity", Base.metadata,
+                          Column('place_id', String(60),
+                                 ForeignKey('places.id', onupdate='CASCADE',
+                                            ondelete='CASCADE'),
+                                 primary_key=True),
+                          Column('amenity_id', String(60),
+                                 ForeignKey('amenities.id', onupdate='CASCADE',
+                                            ondelete='CASCADE'),
+                                 primary_key=True))
 
 
 class Place(BaseModel, Base):
@@ -69,7 +70,7 @@ class Place(BaseModel, Base):
         amenities_list = []
         all_amenities = storage.all(Amenity)
         for amenity_id in all_amenities.values():
-            amenities_list.append(amenity_id);
+            amenities_list.append(amenity_id)
         return amenities_list
 
     @amenities.setter
